@@ -7,13 +7,14 @@ replicaCount: 1
 lokiUrl: "http://loki:3100"
 
 healthcheck: false
+targetPort: 24224
 
 image:
   repository: grafana/fluent-plugin-loki
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "master"
-  containerPort: 80
+  containerPort: 24224
 
 imagePullSecrets: []
 nameOverride: ""
@@ -34,7 +35,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 24224
 
 ingress:
   enabled: false
