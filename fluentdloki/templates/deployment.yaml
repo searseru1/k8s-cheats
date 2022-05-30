@@ -49,6 +49,13 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: config-volume
+            mountPath: /fluentd/etc
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "fluentdloki.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
