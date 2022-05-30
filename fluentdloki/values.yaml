@@ -6,6 +6,8 @@ replicaCount: 1
 
 lokiUrl: "http://loki:3100"
 
+healthcheck: false
+
 image:
   repository: grafana/fluent-plugin-loki
   pullPolicy: IfNotPresent
