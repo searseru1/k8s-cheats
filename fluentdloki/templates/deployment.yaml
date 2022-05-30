@@ -33,7 +33,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            LOKI_URL: "{{ .Values.lokiUrl }}"
+            - name: LOKI_URL
+              value: "{{ .Values.lokiUrl }}"
           ports:
             - name: http
               containerPort: {{ .Values.image.containerPort }}
