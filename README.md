@@ -13,6 +13,7 @@
 ### Ingress annotation
 ```
 kubernetes.io/ingress.class: nginx
+nginx.ingress.kubernetes.io/whitelist-source-range: cidr
 ```
 ### Cert managet annotation
 ```
@@ -53,4 +54,30 @@ allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 EOF
+```
+### Overrides
+```
+ingress:
+  enabled: true
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     nginx.ingress.kubernetes.io/whitelist-source-range: cidr
+     cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: domain.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: secret-tls
+      hosts:
+        - domain.com
+```
+### Cli
+```
+kubectl -n monitor exec -it $(kubectl -n monitor get pods -l app.kubernetes.io/name=fluentdloki --output=jsonpath={.items..metadata.name}) bash
+
+curl -X POST -d 'json={"src":"http"}' http://localhost:8881
+
+curl -i -H "Content-type: application/json" -X POST --data '{ "streams": [ { "labels": "{source=\"JSON\",job=\"simpleJsonJob\", host=\"SimpleHost\"}", "entries": [{ "ts": "2022-05-31T16:48:20Z", "line": "TEST!" }] } ] }' http://localhost:8881
 ```
