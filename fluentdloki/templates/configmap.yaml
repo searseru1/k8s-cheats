@@ -14,6 +14,19 @@ data:
       keepalive_timeout 10s
       port  24224
     </source>
+
+    <filter **>
+      @type grep
+      <regexp>
+        key HTTP_token
+        pattern /asdkasjidu23/
+      </regexp>
+      <exclude>
+        key message
+        pattern /uncool/
+      </exclude>
+    </filter>
+
     <match **>
       @type loki
       <label>
