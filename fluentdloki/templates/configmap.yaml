@@ -6,48 +6,22 @@ metadata:
     {{- include "fluentdloki.labels" . | nindent 4 }}
 data:
   fluent.conf: |
-      <source>
-        @type  forward
-        @id    input1
-        @label @mainstream
-        port  24224
-      </source>
-
-      <filter **>
-        @type stdout
-      </filter>
-
-      <label @mainstream>
-        <match docker.**>
-          @type file
-          @id   output_docker1
-          path         /fluentd/log/docker.*.log
-          symlink_path /fluentd/log/docker.log
-          append       true
-          time_slice_format %Y%m%d
-          time_slice_wait   1m
-          time_format       %Y%m%dT%H%M%S%z
-        </match>
-        <match **>
-          @type file
-          @id   output1
-          path         /fluentd/log/data.*.log
-          symlink_path /fluentd/log/data.log
-          append       true
-          time_slice_format %Y%m%d
-          time_slice_wait   10m
-          time_format       %Y%m%dT%H%M%S%z
-        </match>
-      @include loki.conf
+    <source>
+      @type http
+      add_http_headers true
+      bind 0.0.0.0
+      body_size_limit 32m
+      keepalive_timeout 10s
+      port  24224
+    </source>
+    <match **>
+      @type loki
+      <label>
+        HTTP_SERVER
       </label>
-
-  loki.conf: |
-      <match loki.**>
-        @type loki
-        url "#{ENV['LOKI_URL']}"
-        extra_labels {"job":"fluentd"}
-        <buffer>
-          flush_interval 10s
-          flush_at_shutdown true
-        </buffer>
-      </match>
+      url "http://loki:3100"
+      extra_labels {"env":"dev"}
+      flush_interval 10s
+      flush_at_shutdown true
+      buffer_chunk_limit 1m
+    </match>
