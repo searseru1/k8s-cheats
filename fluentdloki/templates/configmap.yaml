@@ -18,8 +18,8 @@ data:
     <filter **>
       @type grep
       <regexp>
-        key HTTP_token
-        pattern /asdkasjidu23/
+        key HTTP_TOKEN
+        pattern /123456789/
       </regexp>
       <exclude>
         key message
